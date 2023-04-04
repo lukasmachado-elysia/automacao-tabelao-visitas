@@ -1,2 +1,7 @@
 virtualEnv
 get-pip.py
+/MVC/__pycache__
+build
+dist
+app.spec
+main.ipynb

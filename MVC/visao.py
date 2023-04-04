@@ -1,50 +1,84 @@
-from tkinter import *
+from tkinter import ttk
+import tkinter as tk
+from tkcalendar import *
 from tkinter import filedialog
+from tkinter import messagebox
 
-class Visao(Tk):
-    def __init__(self, controle):
-        super().__init__()
-        self.controle = controle
-        # Propriedades iniciais da janela
-        self.title('Gerador de Relatório de Visitas')
-        self_width = 320
-        self_height = 480    
-         
-        # Pegando o tamanho da tela
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+class Visao(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pasta = tk.StringVar(value="") # Utilizada para atualizar a label em tempo de execucao 
 
-        # posicionando a janela no centro
-        x = (screen_width /2) - (self_width /2) # largura 
-        y = (screen_height /2) - (self_height /2) # altura
-        self.geometry(f"{self_height}x{self_width}+{int(x)}+{int(y)}") # (X)+(Y) coordenates
+        # Fazendo a montagem dos elementos na janela -----------------------------------------------------------------------------------------
+        self.labelDe = ttk.Label(parent, text="De:", font=('Helvatical',11)).grid(column=0, row=0, padx=5, pady=5)
+        self.inputDe = DateEntry(parent, selectmode='day' ,date_pattern='dd/mm/yyyy', font=('Helvatical',11))
+        self.inputDe.grid(column=1, row=0, padx=5, pady=5)
 
-        self.pasta = StringVar()
-
-        self.columnconfigure(0, weight=0)
-        self.columnconfigure(1, weight=0)
-        self.columnconfigure(2, weight=0)
-
-        self.label1 = Label(self, text="De:", font=('Helvatical',11)).grid(column=0, row=0, padx=5, pady=5)
-        self.input1 = Entry(self).grid(column=1, row=0, padx=5, pady=5)
-
-        self.label2 = Label(self, text="Até:", font=('Helvatical',11)).grid(column=0,row=1, padx=5, pady=5)
-        self.input2 = Entry(self)
-        self.input2.grid(column=1, row=1, padx=5, pady=5)
+        self.labelAte = ttk.Label(parent, text="Até:", font=('Helvatical',11)).grid(column=0,row=1, padx=5, pady=5)
+        self.inputAte = DateEntry(parent, selectmode='day' ,date_pattern='dd/mm/yyyy', font=('Helvatical',11))
+        self.inputAte.grid(column=1, row=1, padx=5, pady=5)
         
-        self.label3 = Label(self, text="Pasta onde está o arquivo:", font=('Helvatical',11)).grid(row=2, column=0, padx=10, pady=10)
-        self.input3 = Entry(self, text="Pasta onde está o arquivo:", textvariable= self.pasta, width=25, font=('Helvatical',10))
-        self.input3.grid(row=2, column=1, padx=5, pady=5)
+        self.labelLocalArq = ttk.Label(parent, text="Pasta onde está o arquivo:", font=('Helvatical',11)).grid(row=2, column=0, padx=10, pady=10)
+        self.inputLocalArq = ttk.Entry(parent, text="Pasta onde está o arquivo:", textvariable= self.pasta, width=25, font=('Helvatical',10))
+        self.inputLocalArq.grid(row=2, column=1, padx=5, pady=5)
+        # -----------------------------------------------------------------------------------------------------------------------------------
 
         # Botao para selecionar pasta onde sera salvo o arquivo
-        self.btn1 = Button(self, text='Selecionar pasta', command=self.selecionarPasta).grid(row=2, column=2, padx=5, pady=5)
+        self.btnSelecPasta = ttk.Button(parent, text='Selecionar pasta', command=self.selecionarPasta)
+        self.btnSelecPasta.grid(row=2, column=2, padx=5, pady=5)
 
         # Botao para gerar o relatorio e realizar a busca
-        self.btn2 = Button(self, text='Buscar Dados')
-        self.btn2.grid(row=3, column=0, padx=10, pady=10)
-        self.btn2.bind("<Button>", controle.principal)
-        
+        self.btnBuscarDados = ttk.Button(parent, text='Buscar Dados')
+        self.btnBuscarDados.grid(row=3, column=0, padx=10, pady=10)
+
+    # Buscando pasta para onde sera salvo o arquivo
     def selecionarPasta(self):
         self.pasta.set(filedialog.askdirectory(title="Salvar em", initialdir='/'))
 
-    # criar getters e setters do input da pasta e das duas datas
+    # Criar getters e setters do input da pasta e das duas datas
+    def get_Input_Local_Arq(self):
+        return self.inputLocalArq
+    
+    # Getter dos botoes
+    def get_Btn_Buscar_Dados(self):
+        return self.btnBuscarDados
+    
+    def get_Btn_Local_Salvamento(self):
+        return self.btnSelecPasta
+    
+    # Getter das datas
+    def get_Input_Data_De(self):
+        return self.inputDe
+    
+    def get_Input_Data_Ate(self):
+        return self.inputAte
+    
+    # Messages box para comunicacao
+    def message_Box(self, titulo, mensagem, tipo):
+        """
+            Mostra um message box na tela para o usuario.
+
+            Parametros:
+            ----
+                titulo: (str)
+                    O titulo da message box
+                
+                mensagem: (str)
+                    Mensagem a ser exibida
+
+                tipo: (str)
+                    Tipo de message box.\n 
+                    Dentre elas:\n
+                        * info - informacao
+                        * error - erro
+                        * warning - aviso
+        """
+        # Info box
+        if tipo=='info':
+            messagebox.showinfo(message=mensagem, title=titulo)
+        elif tipo=='error':
+            messagebox.showerror(message=mensagem, title=titulo)
+        elif tipo=='warning':
+            messagebox.showwarning(message=mensagem, title=titulo)
+        elif tipo=='askquestion':
+            return messagebox.askquestion(message=mensagem, title=titulo)

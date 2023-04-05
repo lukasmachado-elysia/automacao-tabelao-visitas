@@ -112,8 +112,8 @@ class Modelo:
                 
                 tipoAcesso: str (OPCIONAL)
                     Url de acesso para o tipo de funcao na API, POST ou GET.
-                    Se nao for especificado nenhum ele ira utilizar o URL que ja esta no funcao.
-                    Ex.: **/api/2/assignments**
+                    Se nao for especificado nenhum ele ira utilizar o URL que ja esta no funcao.\n
+                    URL: **/api/2/assignments**
                 
                 head: str (OBRIGATORIO)
                     Autorizacao para acesso da API.
